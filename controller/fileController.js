@@ -41,10 +41,35 @@ const postFile = asyncHandler(async (req, res) => {
       // response -> link
       const response = await file.save();
       return res.json({
-        file: `${process.env.APP_BASE_URL}/files/${response.uuid}`,
+        file: `${process.env.APP_BASE_URL}/api/file/${response.uuid}`,
       });
     });
   });
+
+  const downloadFile=asyncHandler(async (req,res)=>{
+    try{
+        const uuid=req.params.uuid;
+        const file=await File.findOne({uuid:uuid});
+        if(!file){
+            return res.render('download',{error:"link has been expired"})
+        }
+        else{
+            return res.render('download',{
+                fileName:file.filename,
+                uuid:file.uuid,
+                fileSize:file.size,
+                downloadLink:`${process.env.APP_BASE_URL}/files/download/${file.uuid}`
+
+            })
+        }
+
+    }
+    catch(err){
+        return res.render('download',{error:"something went wrong."})
+    }
+
+
+  })
   
 
-module.exports = { postFile };
+module.exports = { postFile ,downloadFile};
