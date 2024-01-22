@@ -6,9 +6,11 @@ const ejs=require('ejs');
 const path=require('path');
 dbConnect();
 const fileRouter=require("./routes/fileRoutes");
+app.use(express.json());
+app.use(express.static(__dirname + "/public"));
 
 // view engine
-app.set('views',path.join(__dirname,'/views'));
+app.set('views',path.resolve(__dirname,'./views'));
 app.set('view engine','ejs');
 
 app.use('/api/file',fileRouter);

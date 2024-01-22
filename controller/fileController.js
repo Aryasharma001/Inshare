@@ -46,7 +46,7 @@ const postFile = asyncHandler(async (req, res) => {
     });
   });
 
-  const downloadFile=asyncHandler(async (req,res)=>{
+  const getDownloadFile=asyncHandler(async (req,res)=>{
     try{
         const uuid=req.params.uuid;
         const file=await File.findOne({uuid:uuid});
@@ -58,7 +58,7 @@ const postFile = asyncHandler(async (req, res) => {
                 fileName:file.filename,
                 uuid:file.uuid,
                 fileSize:file.size,
-                downloadLink:`${process.env.APP_BASE_URL}/files/download/${file.uuid}`
+                downloadLink:`${process.env.APP_BASE_URL}/api/file/download/${file.uuid}`
 
             })
         }
@@ -69,7 +69,20 @@ const postFile = asyncHandler(async (req, res) => {
     }
 
 
+  });
+
+  const downloadFile=asyncHandler(async(req,res)=>{
+    // Extract link and get file from storage send download stream 
+   const file = await File.findOne({ uuid: req.params.uuid });
+   // Link expired
+   if(!file) {
+        return res.render('download', { error: 'Link has been expired.'});
+   } 
+   const response = await file.save();
+   const filePath = `${__dirname}/../${file.path}`;
+   res.download(filePath);
+
   })
   
 
-module.exports = { postFile ,downloadFile};
+module.exports = { postFile ,getDownloadFile,downloadFile};

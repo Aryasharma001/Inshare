@@ -1,9 +1,10 @@
 const express=require("express");
 router=express.Router();
-const {postFile,downloadFile}=require("../controller/fileController")
+const {postFile,getDownloadFile,downloadFile}=require("../controller/fileController")
 
 router.post("/",postFile);
-router.get("/:uuid",downloadFile);
+router.get("/:uuid",getDownloadFile);
+router.get("/download/:uuid",downloadFile);
 
 
 module.exports= router;
